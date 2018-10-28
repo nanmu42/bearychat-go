@@ -7,7 +7,7 @@ import (
 	"flag"
 	"log"
 
-	bearychat "github.com/bearyinnovative/bearychat-go"
+	"github.com/nanmu42/bearychat-go"
 )
 
 var rtmToken string
