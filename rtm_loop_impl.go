@@ -10,6 +10,9 @@ import (
 	"github.com/pkg/errors"
 )
 
+// JSONRawTag key for raw message
+const JSONRawTag = "go_json_raw_message"
+
 type rtmLoop struct {
 	wsHost string
 	conn   *websocket.Conn
@@ -152,6 +155,8 @@ func (l *rtmLoop) readMessage() {
 			continue
 		}
 
+		// store raw message for later use
+		message[JSONRawTag] = rawMessage
 		l.rtmC <- message
 	}
 }

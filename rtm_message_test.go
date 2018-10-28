@@ -266,3 +266,84 @@ func TestRTMMessage_ParseMention(t *testing.T) {
 	mentioned, content = m.ParseMentionUID(uid)
 	expect(true, "hello")
 }
+
+func TestRTMMessage_ParseReferredFile(t *testing.T) {
+	var msg = RTMMessage{
+		JSONRawTag: []byte(`{
+   "data":{
+      "attachments":[
+         {
+            "file":{
+               "category":"image",
+               "created":"2018-10-28T14:16:52.000+0000",
+               "deleted":false,
+               "description":"",
+               "height":500,
+               "id":"=b93bD",
+               "image_url":"https://file.bearychat.com/45c7a7dd13a29e046e5a20a9a774b5de",
+               "inactive":false,
+               "is_public":true,
+               "key":"45c7a7dd13a29e046e5a20a9a774b5de",
+               "mime":"image/png",
+               "name":"clipboard_2018-10-28_22:16.png",
+               "orientation":1,
+               "original":true,
+               "preview_url":"https://file.bearychat.com/45c7a7dd13a29e046e5a20a9a774b5de",
+               "size":5677,
+               "source":"internal",
+               "summary":null,
+               "team_id":"=bwECm",
+               "title":"clipboard_2018-10-28_22:16.png",
+               "type":"png",
+               "uid":"=bxcKY",
+               "updated":"2018-10-28T14:16:52.000+0000",
+               "upload_zone":"unknown",
+               "url":"https://file.bearychat.com/45c7a7dd13a29e046e5a20a9a774b5de",
+               "width":500
+            },
+            "refer_text":"上传了图片",
+            "refer_text_i18n":{
+               "en":"uploaded an image",
+               "zh-CN":"上传了图片"
+            },
+            "subtype":"file",
+            "text":"nanmu: 上传了图片",
+            "type":"refer",
+            "uid":"=bxcKY"
+         }
+      ],
+      "created":"2018-10-28T14:26:26.000+0000",
+      "created_ts":1540736786063,
+      "disable_markdown":false,
+      "edited":false,
+      "id":"=hmjlz",
+      "is_channel":true,
+      "key":"1540736786063.0177",
+      "pin_id":null,
+      "reactions":[
+
+      ],
+      "refer_key":"1540736212397.0229",
+      "repost":null,
+      "robot_id":null,
+      "subtype":"normal",
+      "team_id":"=bwECm",
+      "text":"@<==bxcNg=> ",
+      "thread_key":null,
+      "uid":"=bxcKY",
+      "updated":"2018-10-28T14:26:26.000+0000",
+      "vchannel_id":"=bwTfi"
+   },
+   "ts":1540736786090,
+   "type":"update_attachments"
+}`),
+	}
+
+	file, err := msg.ParseReferredFile()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if file.ImageURL == "" {
+		t.Fatal("ImageURL is empty")
+	}
+}

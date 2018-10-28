@@ -1,6 +1,11 @@
 package bearychat
 
-import "regexp"
+import (
+	"encoding/json"
+	"regexp"
+
+	"github.com/pkg/errors"
+)
 
 type RTMMessageType string
 
@@ -15,6 +20,7 @@ const (
 	RTMMessageTypeChannelMessage                      = "channel_message"
 	RTMMessageTypeChannelTyping                       = "channel_typing"
 	RTMMessageTypeUpdateUserConnection                = "update_user_connection"
+	RTMMessageTypeUpdateAttachments                   = "update_attachments"
 )
 
 // RTMMessage represents a message entity send over RTM protocol.
@@ -125,4 +131,39 @@ func (m RTMMessage) ParseMentionUID(uid string) (bool, string) {
 	}
 
 	return false, text
+}
+
+// ParseReferImageURL tries to get
+func (m RTMMessage) ParseReferredFile() (file AttachedFile, err error) {
+	rawMessageInterface, rawExist := m[JSONRawTag]
+	if !rawExist {
+		err = errors.New("rawMsg not exist")
+		return
+	}
+	rawMessage, ok := rawMessageInterface.([]byte)
+	if !ok {
+		err = errors.New("rawMsg not []byte")
+		return
+	}
+
+	var msg UpdateAttachments
+	err = json.Unmarshal(rawMessage, &msg)
+	if err != nil {
+		err = errors.Wrap(err, "json.Unmarshal")
+		return
+	}
+
+	if len(msg.Data.Attachments) == 0 {
+		err = errors.New("Attachments len is 0")
+		return
+	}
+
+	if msg.Data.Attachments[0].File == nil {
+		err = errors.New("no file detected in first attachment")
+		return
+	}
+
+	file = *msg.Data.Attachments[0].File
+
+	return
 }
