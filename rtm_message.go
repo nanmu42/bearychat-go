@@ -92,8 +92,27 @@ func (m RTMMessage) IsFromUID(uid string) bool {
 }
 
 func (m RTMMessage) Text() string {
-	if text, ok := m["text"].(string); ok {
-		return text
+	if m.Type() == RTMMessageTypeUpdateAttachments {
+		rawMessageInterface, rawExist := m[JSONRawTag]
+		if !rawExist {
+			return ""
+		}
+		rawMessage, ok := rawMessageInterface.([]byte)
+		if !ok {
+			return ""
+		}
+
+		var msg UpdateAttachments
+		badLuck := json.Unmarshal(rawMessage, &msg)
+		if badLuck != nil {
+			return ""
+		}
+
+		return msg.Data.Text
+	} else {
+		if text, ok := m["text"].(string); ok {
+			return text
+		}
 	}
 
 	return ""
@@ -133,8 +152,8 @@ func (m RTMMessage) ParseMentionUID(uid string) (bool, string) {
 	return false, text
 }
 
-// ParseReferImageURL tries to get
-func (m RTMMessage) ParseReferredFile() (file AttachedFile, err error) {
+// ParseReferImageURL tries to get first attached file
+func (m RTMMessage) ParseAttachedFile() (file AttachedFile, err error) {
 	rawMessageInterface, rawExist := m[JSONRawTag]
 	if !rawExist {
 		err = errors.New("rawMsg not exist")
@@ -146,24 +165,29 @@ func (m RTMMessage) ParseReferredFile() (file AttachedFile, err error) {
 		return
 	}
 
-	var msg UpdateAttachments
-	err = json.Unmarshal(rawMessage, &msg)
+	if m.Type() == RTMMessageTypeUpdateAttachments {
+		var msg UpdateAttachments
+		err = json.Unmarshal(rawMessage, &msg)
+		if err != nil {
+			err = errors.Wrap(err, "json.Unmarshal")
+			return
+		}
+		if len(msg.Data.Attachments) == 0 {
+			err = errors.New("Attachments len is 0")
+			return
+		}
+		if msg.Data.Attachments[0].File == nil {
+			err = errors.New("no file detected in first attachment")
+			return
+		}
+		file = *msg.Data.Attachments[0].File
+	}
+
+	err = json.Unmarshal(rawMessage, &file)
 	if err != nil {
 		err = errors.Wrap(err, "json.Unmarshal")
 		return
 	}
-
-	if len(msg.Data.Attachments) == 0 {
-		err = errors.New("Attachments len is 0")
-		return
-	}
-
-	if msg.Data.Attachments[0].File == nil {
-		err = errors.New("no file detected in first attachment")
-		return
-	}
-
-	file = *msg.Data.Attachments[0].File
 
 	return
 }

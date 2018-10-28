@@ -269,6 +269,7 @@ func TestRTMMessage_ParseMention(t *testing.T) {
 
 func TestRTMMessage_ParseReferredFile(t *testing.T) {
 	var msg = RTMMessage{
+		"type": "update_attachments",
 		JSONRawTag: []byte(`{
    "data":{
       "attachments":[
@@ -339,7 +340,7 @@ func TestRTMMessage_ParseReferredFile(t *testing.T) {
 }`),
 	}
 
-	file, err := msg.ParseReferredFile()
+	file, err := msg.ParseAttachedFile()
 	if err != nil {
 		t.Fatal(err)
 	}
