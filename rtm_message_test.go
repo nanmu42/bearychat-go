@@ -347,4 +347,84 @@ func TestRTMMessage_ParseReferredFile(t *testing.T) {
 	if file.ImageURL == "" {
 		t.Fatal("ImageURL is empty")
 	}
+
+	var msg2 = RTMMessage{
+		JSONRawTag: []byte(`{
+   "created":"2018-10-29T07:26:56.000+0000",
+   "created_ts":1540798015600,
+   "edited":false,
+   "file":{
+      "category":"image",
+      "channel_id":null,
+      "comments_count":0,
+      "comments_ids":[
+
+      ],
+      "created":"2018-10-29T07:26:56.000+0000",
+      "deleted":false,
+      "description":"",
+      "height":120,
+      "id":"=b937z",
+      "image_url":"https://file.bearychat.com/77ec54654e09243a8064747b248cb73d",
+      "inactive":false,
+      "is_public":false,
+      "key":"77ec54654e09243a8064747b248cb73d",
+      "mime":"image/gif",
+      "name":"cat.gif",
+      "orientation":1,
+      "original":true,
+      "preview_url":"https://file.bearychat.com/77ec54654e09243a8064747b248cb73d",
+      "size":4081,
+      "source":"internal",
+      "summary":null,
+      "team_id":"=bwECm",
+      "title":"cat.gif",
+      "type":"gif",
+      "uid":"=bxcKY",
+      "updated":"2018-10-29T07:26:56.000+0000",
+      "upload_zone":"unknown",
+      "url":"https://file.bearychat.com/77ec54654e09243a8064747b248cb73d",
+      "vcids":[
+         "=c6fkE6xfO"
+      ],
+      "width":120
+   },
+   "go_json_raw_message":"eyJjcmVhdGVkIjoiMjAxOC0xMC0yOVQwNzoyNjo1Ni4wMDArMDAwMCIsImNyZWF0ZWRfdHMiOjE1NDA3OTgwMTU2MDAsImVkaXRlZCI6ZmFsc2UsImZpbGUiOnsiY2F0ZWdvcnkiOiJpbWFnZSIsImNoYW5uZWxfaWQiOm51bGwsImNvbW1lbnRzX2NvdW50IjowLCJjb21tZW50c19pZHMiOltdLCJjcmVhdGVkIjoiMjAxOC0xMC0yOVQwNzoyNjo1Ni4wMDArMDAwMCIsImRlbGV0ZWQiOmZhbHNlLCJkZXNjcmlwdGlvbiI6IiIsImhlaWdodCI6MTIwLCJpZCI6Ij1iOTM3eiIsImltYWdlX3VybCI6Imh0dHBzOi8vZmlsZS5iZWFyeWNoYXQuY29tLzc3ZWM1NDY1NGUwOTI0M2E4MDY0NzQ3YjI0OGNiNzNkIiwiaW5hY3RpdmUiOmZhbHNlLCJpc19wdWJsaWMiOmZhbHNlLCJrZXkiOiI3N2VjNTQ2NTRlMDkyNDNhODA2NDc0N2IyNDhjYjczZCIsIm1pbWUiOiJpbWFnZS9naWYiLCJuYW1lIjoiY2F0LmdpZiIsIm9yaWVudGF0aW9uIjoxLCJvcmlnaW5hbCI6dHJ1ZSwicHJldmlld191cmwiOiJodHRwczovL2ZpbGUuYmVhcnljaGF0LmNvbS83N2VjNTQ2NTRlMDkyNDNhODA2NDc0N2IyNDhjYjczZCIsInNpemUiOjQwODEsInNvdXJjZSI6ImludGVybmFsIiwic3VtbWFyeSI6bnVsbCwidGVhbV9pZCI6Ij1id0VDbSIsInRpdGxlIjoiY2F0LmdpZiIsInR5cGUiOiJnaWYiLCJ1aWQiOiI9YnhjS1kiLCJ1cGRhdGVkIjoiMjAxOC0xMC0yOVQwNzoyNjo1Ni4wMDArMDAwMCIsInVwbG9hZF96b25lIjoidW5rbm93biIsInVybCI6Imh0dHBzOi8vZmlsZS5iZWFyeWNoYXQuY29tLzc3ZWM1NDY1NGUwOTI0M2E4MDY0NzQ3YjI0OGNiNzNkIiwidmNpZHMiOlsiPWM2ZmtFNnhmTyJdLCJ3aWR0aCI6MTIwfSwiaWQiOiI9aG1zbEwiLCJpc19jaGFubmVsIjpmYWxzZSwia2V5IjoiMTU0MDc5ODAxNTYwMC4wNDA0IiwicGluX2lkIjpudWxsLCJyZWFjdGlvbnMiOltdLCJyZWZlcl9rZXkiOm51bGwsInJlcG9zdCI6bnVsbCwicmVzb3VyY2Vfa2V5IjoiMGY2OWIwMDktMzE0ZS00Njc4LWEyZDItZWQwZWRmNzZkNzk4IiwicmlkIjoiMjEwYmZhM2ZkNGQ1ZDcxNzE4ZjlmOGNmMDQzMmRlYjEiLCJyb2JvdF9pZCI6bnVsbCwic3VidHlwZSI6ImZpbGUiLCJ0ZWFtX2lkIjoiPWJ3RUNtIiwidGV4dCI6IuS4iuS8oOS6huWbvueJhyIsInRleHRfaTE4biI6eyJlbiI6InVwbG9hZGVkIGFuIGltYWdlIiwiemgtQ04iOiLkuIrkvKDkuoblm77niYcifSwidGhyZWFkX2tleSI6bnVsbCwidHMiOjE1NDA3OTgwMTU2MzcsInR5cGUiOiJtZXNzYWdlIiwidWlkIjoiPWJ4Y0tZIiwidXBkYXRlZCI6IjIwMTgtMTAtMjlUMDc6MjY6NTYuMDAwKzAwMDAiLCJ2Y2hhbm5lbF9pZCI6Ij1jNmZrRTZ4Zk8ifQ==",
+   "id":"=hmslL",
+   "is_channel":false,
+   "key":"1540798015600.0404",
+   "pin_id":null,
+   "reactions":[
+
+   ],
+   "refer_key":null,
+   "repost":null,
+   "resource_key":"0f69b009-314e-4678-a2d2-ed0edf76d798",
+   "rid":"210bfa3fd4d5d71718f9f8cf0432deb1",
+   "robot_id":null,
+   "subtype":"file",
+   "team_id":"=bwECm",
+   "text":"上传了图片",
+   "text_i18n":{
+      "en":"uploaded an image",
+      "zh-CN":"上传了图片"
+   },
+   "thread_key":null,
+   "ts":1540798015637,
+   "type":"message",
+   "uid":"=bxcKY",
+   "updated":"2018-10-29T07:26:56.000+0000",
+   "vchannel_id":"=c6fkE6xfO"
+}`),
+		"type": "message",
+	}
+
+	file, err = msg2.ParseAttachedFile()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if file.ImageURL == "" {
+		t.Fatal("ImageURL is empty")
+	}
+
 }

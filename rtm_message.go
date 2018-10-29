@@ -181,13 +181,20 @@ func (m RTMMessage) ParseAttachedFile() (file AttachedFile, err error) {
 			return
 		}
 		file = *msg.Data.Attachments[0].File
+		return
 	}
 
-	err = json.Unmarshal(rawMessage, &file)
+	var msgFile MessageFile
+	err = json.Unmarshal(rawMessage, &msgFile)
 	if err != nil {
 		err = errors.Wrap(err, "json.Unmarshal")
 		return
 	}
+	if msgFile.File == nil {
+		err = errors.New("no file detected in first attachment")
+		return
+	}
+	file = *msgFile.File
 
 	return
 }

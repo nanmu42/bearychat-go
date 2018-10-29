@@ -133,3 +133,7 @@ type UpdateAttachments struct {
 	Ts   int64  `json:"ts"`
 	Type string `json:"type"`
 }
+
+type MessageFile struct {
+	File *AttachedFile `json:"file"`
+}
